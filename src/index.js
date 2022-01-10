@@ -4,6 +4,7 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import FlightMapContainer from './Map.tsx'
+import FlightInfo from './FlightInfo.ts'
 
 ReactDOM.render(
   <React.StrictMode>
@@ -12,11 +13,29 @@ ReactDOM.render(
   document.getElementById('root')
   
 );
-var flightComponent = new FlightMapContainer(FlightMapContainer.testTwoFlights());
-setTimeout(function() {
-  document.getElementsByTagName('flights-map')[0].flights = flightComponent.flights
-  document.getElementsByTagName('flights-map')[0].config = {animation: {enabled: false}, showMarkers: true}
-}, 200)
+const flightInfo = new FlightInfo();
+let flightMap;
+let map;
+
+setTimeout(async function() {
+  flightInfo.getOngoingFlights().then(flights => flights.json()).then(flights => {
+    flightMap = new FlightMapContainer();
+    let newData = FlightMapContainer.fromData(flights);
+    flightMap.flights = newData;
+    map = flightMap.buildMap();
+    flightMap.addMarkers(map);
+  })
+
+  setInterval(function() {
+    flightInfo.getOngoingFlights().then(flights => flights.json()).then(data => {
+      let newData = FlightMapContainer.fromData(data);
+      flightMap.flights = newData;
+      flightMap.updateMarkers();
+    });
+  }, 10000);
+    
+    
+}, 200);
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

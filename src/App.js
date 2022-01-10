@@ -1,11 +1,11 @@
 import './App.css';
-import '@immfly/flights-map';
+import FlightMap from './Map.tsx';
 
 function App() {  
   return (
     <div> 
       <div className = "flightsMap">
-        <flights-map></flights-map>
+        <FlightMap />
       </div>
       <footer>
         Henmlo
